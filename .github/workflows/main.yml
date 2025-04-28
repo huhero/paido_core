@@ -8,7 +8,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       SECRET_JWT_KEY: ${{ secrets.SECRET_JWT_KEY }}
-      ALGORITHM: ${{ secrets.ALGORITHM }}
+      ALGORITHM_JWT: ${{ secrets.ALGORITHM_JWT }}
       JWT_EXPIRE_MINUTES: ${{ secrets.JWT_EXPIRE_MINUTES }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
