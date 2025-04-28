@@ -5,6 +5,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_JWT_KEY: ${{ secrets.SECRET_JWT_KEY }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+      JWT_EXPIRE_MINUTES: ${{ secrets.JWT_EXPIRE_MINUTES }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
     steps:
       - name: Copiando archivo del repositorio
         uses: actions/checkout@v3
