@@ -3,19 +3,23 @@ services:
     image: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_DB: app_db
+      POSTGRES_PASSWORD: app_password
     ports:
       - "5432:5432"
 
   paido_app:
     image: paido_app
-    build: .
     entrypoint: ./entrypoint.sh
+    build: .
     ports:
       - "8000:8000"
     depends_on:
       - paido_database
+    environment:
+      DATABASE_URL: postgresql+psycopg://app_user:app_password@fastzero_database:5432/app_db
 
 volumes:
   pgdata:
