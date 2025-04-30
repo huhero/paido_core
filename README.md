@@ -113,3 +113,22 @@ iniciar imagen
 # bajar aplicacion 
 
 `docker-compose down`
+
+# Fly.io commands
+
+login
+
+`flyctl auth login`
+
+deploy
+
+`flyctl deploy`
+
+Set enviroment variables
+
+`flyctl secrets set DATABASE_URL`
+
+Show server
+
+
+`flyctl ssh console`
