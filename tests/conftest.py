@@ -8,7 +8,9 @@ from testcontainers.postgres import PostgresContainer
 
 from paido_core.app import app
 from paido_core.database import get_session
-from paido_core.models import School, SchoolType, User, table_registry
+from paido_core.models import table_registry
+from paido_core.models.school import School, SchoolType
+from paido_core.models.user import User
 from paido_core.security import get_password_hash
 
 

@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from paido_core.database import get_session
-from paido_core.models import User
+from paido_core.models.user import User
 from paido_core.schemas import Token
 from paido_core.security import (
     create_access_token,

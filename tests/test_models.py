@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from paido_core.models import User
+from paido_core.models.user import User
 
 
 def test_model_create_user(session):

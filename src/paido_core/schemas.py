@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-from paido_core.models import SchoolType
+from paido_core.models.school import SchoolType
 
 
 class Message(BaseModel):
