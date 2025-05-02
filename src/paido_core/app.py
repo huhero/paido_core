@@ -2,13 +2,13 @@ from http import HTTPStatus
 
 from fastapi import FastAPI
 
-from paido_core.routers import auth, schools, users
-from paido_core.schemas import Message
+from paido_core.routers import auth_router, schools_router, users_router
+from paido_core.schemas.message import Message
 
 app = FastAPI()
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(schools.router)
+app.include_router(auth_router.router)
+app.include_router(users_router.router)
+app.include_router(schools_router.router)
 
 
 @app.get('/', status_code=HTTPStatus.OK, response_model=Message)

@@ -1,7 +1,7 @@
 from jwt import decode
 
-from paido_core.security import create_access_token
-from paido_core.settings import Settings
+from paido_core.core.security import create_access_token
+from paido_core.core.settings import Settings
 
 settings = Settings()
 

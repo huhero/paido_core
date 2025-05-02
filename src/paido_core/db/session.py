@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from paido_core.settings import Settings
+from paido_core.core.settings import Settings
 
 engine = create_engine(Settings().DATABASE_URL)
 

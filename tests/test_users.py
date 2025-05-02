@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from paido_core.schemas import UserPublic
+from paido_core.schemas.user import UserPublic
 
 
 def test_create_user(client):

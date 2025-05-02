@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from paido_core.models import table_registry
-from paido_core.settings import Settings
+from paido_core.core.settings import Settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

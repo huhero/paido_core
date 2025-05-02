@@ -10,9 +10,9 @@ from pwdlib import PasswordHash
 from sqlalchemy import Select
 from sqlalchemy.orm import Session
 
-from paido_core.database import get_session
+from paido_core.core.settings import Settings
+from paido_core.db.session import get_session
 from paido_core.models.user import User
-from paido_core.settings import Settings
 
 pwd_context = PasswordHash.recommended()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/token')
