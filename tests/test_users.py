@@ -45,8 +45,8 @@ def test_read_users_with_users(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_read_user_by_id(client, user):
-    response = client.get(url=f'/users/{user.id}')
+def test_read_user_by_username(client, user):
+    response = client.get(url=f'/users/{user.username}')
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'username': user.username,
@@ -55,14 +55,14 @@ def test_read_user_by_id(client, user):
     }
 
 
-def test_read_user_by_id_not_found(client):
-    response = client.get('/users/2')
+def test_read_user_by_username_not_found(client):
+    response = client.get('/users/wrong_username')
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
 def test_update_user(client, user, token):
     response = client.put(
-        url=f'/users/{user.id}',
+        url=f'/users/{user.username}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'bob',
@@ -70,6 +70,7 @@ def test_update_user(client, user, token):
             'password': 'mynewpassword',
         },
     )
+
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'username': 'bob',
@@ -80,7 +81,7 @@ def test_update_user(client, user, token):
 
 def test_update_wrong_user(client, other_user, token):
     response = client.put(
-        url=f'/users/{other_user.id}',
+        url=f'/users/{other_user.username}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'hola',
@@ -94,7 +95,7 @@ def test_update_wrong_user(client, other_user, token):
 
 def test_update_user_wrong_token(client, user):
     response = client.put(
-        url=f'/users/{user.id}',
+        url=f'/users/{user.username}',
         headers={'Authorization': 'Bearer TOKEN_ERRADO'},
         json={
             'username': 'hola',
@@ -107,7 +108,7 @@ def test_update_user_wrong_token(client, user):
 
 def test_delete_user(client, user, token):
     response = client.delete(
-        url=f'/users/{user.id}',
+        url=f'/users/{user.username}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -117,7 +118,7 @@ def test_delete_user(client, user, token):
 
 def test_delete_wrong_user(client, other_user, token):
     response = client.delete(
-        url=f'/users/{other_user.id}',
+        url=f'/users/{other_user.username}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -127,7 +128,7 @@ def test_delete_wrong_user(client, other_user, token):
 
 def test_delete_user_wrong_token(client, user):
     response = client.delete(
-        url=f'/users/{user.id}',
+        url=f'/users/{user.username}',
         headers={'Authorization': 'Bearer TOKEN_ERRADO'},
     )
 

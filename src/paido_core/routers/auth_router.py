@@ -3,7 +3,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from paido_core.core.security import (
@@ -14,6 +13,7 @@ from paido_core.core.security import (
 from paido_core.db.session import get_session
 from paido_core.models.user import User
 from paido_core.schemas.auth import Token
+from paido_core.services.user_service import UserService
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 T_Session = Annotated[Session, Depends(get_session)]
@@ -25,8 +25,9 @@ def login_for_access_token(
     session: T_Session,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    db_user = session.scalar(
-        select(User).where((User.email == form_data.username) & (User.active))
+    user_service = UserService(session)
+    db_user = user_service.get_user_by_email_or_username(
+        email=form_data.username
     )
 
     if not db_user or not verify_password(
