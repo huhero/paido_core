@@ -16,6 +16,7 @@ from paido_core.schemas.school import (
     SchoolSchema,
     SchoolUpdate,
 )
+from paido_core.services.school_service import SchoolService
 
 router = APIRouter(prefix='/schools', tags=['schools'])
 T_Session = Annotated[Session, Depends(get_session)]
@@ -24,17 +25,9 @@ T_User = Annotated[User, Depends(get_current_user)]
 
 @router.post('/', response_model=SchoolPublic)
 def create_school(school: SchoolSchema, session: T_Session, user: T_User):
-    db_school = School(
-        name=school.name,
-        address=school.address,
-        phone=school.phone,
-        school_type=school.school_type,
-        user_id=user.id,
-    )
+    school_service = SchoolService(session)
+    db_school = school_service.create_school(school, user.id)
 
-    session.add(db_school)
-    session.commit()
-    session.refresh(db_school)
     return db_school
 
 
