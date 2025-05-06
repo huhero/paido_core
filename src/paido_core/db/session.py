@@ -1,11 +1,15 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
 
 from paido_core.core.settings import Settings
 
 engine = create_engine(Settings().DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_session():  # pragma: no cover
-    with Session(engine) as session:
-        yield session
+def get_session():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
