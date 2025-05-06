@@ -1,3 +1,6 @@
+from typing import List
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from paido_core.models.school import School
@@ -20,3 +23,34 @@ class SchoolService:
         self.session.commit()
         self.session.refresh(db_school)
         return db_school
+
+    def get_school_by_name(self, name: str) -> School | None:
+        return self.session.scalar(
+            select(School).where(School.name == name, School.active)
+        )
+
+    def get_user_schools(self, user_id: int, name: str) -> School | None:
+        return self.session.scalar(
+            select(School).where(
+                School.name == name, School.user_id == user_id, School.active
+            )
+        )
+
+    def get_schools(
+        self, skip: int, limit: int, name: str | None = None
+    ) -> List[School] | None:
+        query = select(School).where(School.active)
+
+        if name:
+            query = query.filter(School.name.contains(name))
+
+        db_schools = self.session.scalars(
+            query.offset(skip).limit(limit)
+        ).all()
+
+        return db_schools
+
+    def update_school(self, school: School) -> School:
+        self.session.commit()
+        self.session.refresh(school)
+        return school

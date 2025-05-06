@@ -14,10 +14,6 @@ class SchoolPublic(SchoolSchema):
     id: int
 
 
-class SchoolList(BaseModel):
-    schools: list[SchoolPublic]
-
-
 class SchoolUpdate(BaseModel):
     name: str | None = None
     address: str | None = None

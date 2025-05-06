@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -11,7 +11,6 @@ from paido_core.models.school import School
 from paido_core.models.user import User
 from paido_core.schemas.message import Message
 from paido_core.schemas.school import (
-    SchoolList,
     SchoolPublic,
     SchoolSchema,
     SchoolUpdate,
@@ -26,34 +25,38 @@ T_User = Annotated[User, Depends(get_current_user)]
 @router.post('/', response_model=SchoolPublic)
 def create_school(school: SchoolSchema, session: T_Session, user: T_User):
     school_service = SchoolService(session)
+    db_school = school_service.get_school_by_name(name=school.name)
+
+    if db_school:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='School already registered',
+        )
+
     db_school = school_service.create_school(school, user.id)
 
     return db_school
 
 
-@router.get('/', response_model=SchoolList)
+@router.get('/', response_model=List[SchoolPublic])
 def get_schools(
     session: T_Session,
-    user: T_User,
     name: str | None = None,
     skip: int = 0,
     limit: int = 10,
 ):
-    query = select(School).where(School.user_id == user.id)
+    school_service = SchoolService(session)
+    db_schools = school_service.get_schools(skip=skip, limit=limit, name=name)
 
-    if name:
-        query = query.filter(School.name.contains(name))
-
-    db_schools = session.scalars(query.offset(skip).limit(limit)).all()
-    return {'schools': db_schools}
+    return db_schools
 
 
-@router.delete('/{school_id}', response_model=Message)
-def delete_school(school_id: int, session: T_Session, user: T_User):
-    db_school = session.scalar(
-        select(School).where(
-            School.user_id == user.id, School.id == school_id, School.active
-        )
+@router.delete('/{school_name}', response_model=Message)
+def delete_school(school_name: str, session: T_Session, user: T_User):
+    school_service = SchoolService(session)
+
+    db_school = school_service.get_user_schools(
+        user_id=user.id, name=school_name
     )
 
     if not db_school:
@@ -62,7 +65,8 @@ def delete_school(school_id: int, session: T_Session, user: T_User):
         )
 
     db_school.active = False
-    session.commit()
+
+    school_service.update_school(db_school)
 
     return {'message': 'School has been deleted successfully.'}
 
