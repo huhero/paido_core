@@ -2,12 +2,10 @@ from http import HTTPStatus
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from paido_core.core.security import get_current_user
 from paido_core.db.session import get_session
-from paido_core.models.school import School
 from paido_core.models.user import User
 from paido_core.schemas.message import Message
 from paido_core.schemas.school import (
@@ -55,7 +53,7 @@ def get_schools(
 def delete_school(school_name: str, session: T_Session, user: T_User):
     school_service = SchoolService(session)
 
-    db_school = school_service.get_user_schools(
+    db_school = school_service.get_user_school(
         user_id=user.id, name=school_name
     )
 
@@ -71,14 +69,13 @@ def delete_school(school_name: str, session: T_Session, user: T_User):
     return {'message': 'School has been deleted successfully.'}
 
 
-@router.patch('/{school_id}', response_model=SchoolPublic)
+@router.patch('/{school_name}', response_model=SchoolPublic)
 def patch_school(
-    school_id: int, session: T_Session, user: T_User, school: SchoolUpdate
+    school_name: str, session: T_Session, user: T_User, school: SchoolUpdate
 ):
-    db_school = session.scalar(
-        select(School).where(
-            School.user_id == user.id, School.id == school_id, School.active
-        )
+    school_service = SchoolService(session)
+    db_school = school_service.get_user_school(
+        user_id=user.id, name=school_name
     )
 
     if not db_school:
@@ -89,8 +86,6 @@ def patch_school(
     for key, value in school.model_dump(exclude_unset=True).items():
         setattr(db_school, key, value)
 
-    session.add(db_school)
-    session.commit()
-    session.refresh(db_school)
+    school_service.update_school(db_school)
 
     return db_school

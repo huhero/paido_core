@@ -24,6 +24,32 @@ def test_create_school(client, token):
     }
 
 
+def test_create_same_school(client, token):
+    response = client.post(
+        url='/schools/',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'name': 'School Test',
+            'address': 'Address Test',
+            'phone': '+9876543',
+            'school_type': 'school',
+        },
+    )
+    response = client.post(
+        url='/schools/',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'name': 'School Test',
+            'address': 'Address Test',
+            'phone': '+9876543',
+            'school_type': 'school',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'School already registered'}
+
+
 def test_list_schools_should_return_3_schools(session, client, user, token):
     expected_schools = 3
     session.bulk_save_objects(
@@ -99,7 +125,7 @@ def test_patch_school(session, client, user, token):
     session.refresh(school)
 
     response = client.patch(
-        url=f'/schools/{school.id}',
+        url=f'/schools/{school.name}',
         headers={'Authorization': f'Bearer {token}'},
         json={'name': 'teste'},
     )
@@ -110,7 +136,7 @@ def test_patch_school(session, client, user, token):
 
 def test_patch_wrong_school(client, token):
     response = client.patch(
-        url='/schools/10',
+        url='/schools/wrong_school',
         headers={'Authorization': f'Bearer {token}'},
         json={'name': 'teste'},
     )
