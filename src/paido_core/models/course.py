@@ -1,35 +1,27 @@
 from datetime import datetime
-from enum import Enum
 
-from sqlalchemy import ForeignKey, func
+from sqlalchemy import ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
-# table_registry = registry()
 from .base import table_registry
 
 
-class SchoolType(str, Enum):
-    school = 'school'
-    academy = 'academy'
-    league = 'league'
-    none = 'none'
-
-
 @table_registry.mapped_as_dataclass
-class School:
-    __tablename__ = 'schools'
+class Course:
+    __tablename__ = 'courses'
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
-    name: Mapped[str] = mapped_column(unique=True)
-    address: Mapped[str]
-    phone: Mapped[str]
-    school_type: Mapped[SchoolType]
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-
+    name: Mapped[str]
+    description: Mapped[str]
+    school_id: Mapped[int] = mapped_column(ForeignKey('schools.id'))
     active: Mapped[bool] = mapped_column(init=False, default=True)
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now(), onupdate=func.now()
+    )
+
+    __table_args__ = (
+        UniqueConstraint('school_id', 'name', name='uq_school_course_name'),
     )

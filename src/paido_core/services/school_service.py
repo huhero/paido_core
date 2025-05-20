@@ -29,6 +29,13 @@ class SchoolService:
             select(School).where(School.name == name, School.active)
         )
 
+    def get_school_by_id(self, id: int, user_id: int) -> School | None:
+        return self.session.scalar(
+            select(School).where(
+                School.id == id, School.user_id == user_id, School.active
+            )
+        )
+
     def get_user_school(self, user_id: int, name: str) -> School | None:
         return self.session.scalar(
             select(School).where(

@@ -132,3 +132,22 @@ Show server
 
 
 `flyctl ssh console`
+
+
+
+```bash
+# Iniciar el contenedor y conectarlo a la red, usando el mismo nombre como hostname
+docker run -d \
+    --name app_database \
+    -e POSTGRES_USER=app_user \
+    -e POSTGRES_DB=app_db \
+    -e POSTGRES_PASSWORD=app_password \
+    -p 5432:5432 \
+    postgres
+```
+
+alembic upgrade head
+
+psql -h 0.0.0.0 -U app_user -d app_db
+
+alembic revision --autogenerate -m "[name migration]"

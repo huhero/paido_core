@@ -1,13 +1,12 @@
-from sqlalchemy.orm import registry
+from .base import metadata, table_registry
+from .course import Course
+from .school import School
+from .user import User
 
-# from .school import SchoolType
-
-# from .user import User
-
-table_registry = registry()
-
-metadata = table_registry.metadata
-
-# __all__ = [
-#     'SchoolType',
-# ]
+__all__ = [
+    'User',
+    'School',
+    'Course',
+    'table_registry',
+    'metadata',
+]

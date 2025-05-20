@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from paido_core.models import table_registry
+from paido_core.models.base import table_registry
 from paido_core.core.settings import Settings
 
 # this is the Alembic Config object, which provides
