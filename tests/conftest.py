@@ -10,6 +10,7 @@ from paido_core.app import app
 from paido_core.core.security import get_password_hash
 from paido_core.db.session import get_session
 from paido_core.models import table_registry
+from paido_core.models.course import Course
 from paido_core.models.school import School, SchoolType
 from paido_core.models.user import User
 
@@ -32,6 +33,15 @@ class SchoolFactory(factory.Factory):
     phone = factory.Faker('phone_number')
     school_type = factory.fuzzy.FuzzyChoice(SchoolType)
     user_id = 1
+
+
+class CourseFactory(factory.Factory):
+    class Meta:
+        model = Course
+
+    name = factory.Faker('name')
+    description = factory.Faker('text')
+    school_id = 1
 
 
 @pytest.fixture

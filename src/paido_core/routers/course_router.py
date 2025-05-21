@@ -25,7 +25,7 @@ def create_course(
     school_id: int, course: CourseSchema, session: T_Session, user: T_User
 ):
     school_service = SchoolService(session)
-    db_school = school_service.get_school_by_id(school_id, user.id)
+    db_school = school_service.get_school_user_by_id(school_id, user.id)
     if db_school is None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
@@ -40,9 +40,35 @@ def create_course(
     if db_course:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Your school already exists',
+            detail='Your course already exists',
         )
 
     db_course = course_service.create_course(course, school_id)
+
+    return db_course
+
+
+@router.get(
+    '/school/{school_id}/course/{course_name}', response_model=CoursePublic
+)
+def get_course(school_id: int, course_name: str, session: T_Session):
+    school_service = SchoolService(session)
+    db_school = school_service.get_school_by_id(school_id)
+    if db_school is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='There is no school for this course.',
+        )
+
+    course_service = CourseService(session)
+    db_course = course_service.get_course_by_name(
+        name=course_name, school_id=db_school.id
+    )
+
+    if not db_course:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Course not found',
+        )
 
     return db_course
